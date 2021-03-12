@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../Phonebook.module.css';
+import { connect } from 'react-redux';
+import actions from '../../redux/contacts/contuctsActions';
 
 const Filter = ({ value, onChangeFilter }) => (
   <div className={styles.group}>
@@ -10,7 +12,7 @@ const Filter = ({ value, onChangeFilter }) => (
       type="text"
       value={value}
       name="name"
-      onChange={onChangeFilter}
+      onChange={e => onChangeFilter(e.target.value)}
       required
     />
     <span className={styles.bar}></span>
@@ -23,4 +25,14 @@ Filter.propTypes = {
   onChangeFilter: PropTypes.func.isRequired,
 };
 
-export default Filter;
+const mapStateToProps = state => {
+  return {
+    filter: state.contacts.filter,
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onChangeFilter: filter => dispatch(actions.changeFilter(filter)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Filter);

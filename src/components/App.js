@@ -1,85 +1,51 @@
 import React, { Component } from 'react';
-import shortid from 'shortid';
 import ContactForm from './contactForm/ContactForm';
 import Filter from './filter/Filter';
 import ContactList from './contactList/ContactList';
 import style from './Phonebook.module.css';
+import { connect } from 'react-redux';
+import actions from '../redux/contacts/contuctsActions';
 
-const filterContacts = (filter, contacts) => {
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase()),
-  );
-};
-
-export default class App extends Component {
-  state = {
-    contacts: [],
-    filter: '',
-  };
-
-  addContact = contact => {
-    const { name } = contact;
-    const contactsArray = this.state.contacts;
-    const nameExist = contactsArray.some(contact => contact['name'] === name);
-    if (nameExist) {
-      alert(`${name} is already exist`);
-      return;
-    }
-
-    const contactToAdd = {
-      ...contact,
-      id: shortid.generate(),
-    };
-
-    this.setState(state => ({
-      contacts: [...state.contacts, contactToAdd],
-    }));
-  };
-
-  deleteNumber = id => {
-    this.setState(state => ({
-      contacts: state.contacts.filter(contact => contact.id !== id),
-    }));
-  };
-
-  changeFilter = e => {
-    this.setState({ filter: e.target.value });
-  };
-
-  // localStorage
-
-  // ============================
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-
-  componentDidUpdate() {
-    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-  }
-  // =====================================
+class App extends Component {
   render() {
-    const { contacts, filter } = this.state;
-    const filteredContacts = filterContacts(filter, contacts);
-
+    const { items } = this.props;
     return (
       <div className={style.phoneBook}>
         <h1>Phonebook</h1>
-        <ContactForm onAddContact={this.addContact} />
+        <ContactForm />
         <h2>Contacts</h2>
-        {contacts.length >= 2 && (
-          <Filter value={filter} onChangeFilter={this.changeFilter} />
-        )}
-        {contacts.length > 0 && (
-          <ContactList
-            items={filteredContacts}
-            onDeleteNumber={this.deleteNumber}
-          />
-        )}
+        {items.length >= 2 && <Filter />}
+
+        {items.length > 0 && <ContactList />}
       </div>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    items: state.contacts.items,
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onChangeFilter: filter => dispatch(actions.changeFilter(filter)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+// localStorage
+
+// ============================
+// componentDidMount() {
+//   const contacts = localStorage.getItem('contacts');
+//   const parsedContacts = JSON.parse(contacts);
+//   if (parsedContacts) {
+//     this.setState({ contacts: parsedContacts });
+//   }
+// }
+
+// componentDidUpdate() {
+//   localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+// }
+// =====================================

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../Phonebook.module.css';
+import { connect } from 'react-redux';
+import actions from '../../redux/contacts/contuctsActions';
 
-export default class ContactForm extends Component {
+class ContactForm extends Component {
   state = {
     name: '',
     number: '',
@@ -72,3 +74,15 @@ export default class ContactForm extends Component {
 ContactForm.propTypes = {
   onAddContact: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = state => {
+  return {
+    items: state.contacts.items,
+  };
+};
+
+const mapDispatchToProps = dispatch => ({
+  onAddContact: contact => dispatch(actions.addContact(contact)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);

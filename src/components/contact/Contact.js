@@ -1,26 +1,31 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styles from './Contact.module.css';
+import { connect } from 'react-redux';
+import actions from '../../redux/contacts/contuctsActions';
 
-const Contact = ({ name, number, onDeleteNumber }) => (
-  <>
-    <span>
-      {name}: {number}
-    </span>
-    <button
-      className={styles.buttonDelete}
-      type="button"
-      onClick={onDeleteNumber}
-    >
-      DELETE
-    </button>
-  </>
-);
+const Contact = ({ contact, onDeleteNumber }) => {
+  const deleteItem = () => {
+    onDeleteNumber(contact.id);
+  };
 
-Contact.propTypes = {
-  name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
-  onDeleteNumber: PropTypes.func.isRequired,
+  return (
+    <>
+      <span>
+        {contact.name}: {contact.number}
+      </span>
+      <button
+        className={styles.buttonDelete}
+        type="button"
+        onClick={deleteItem}
+      >
+        DELETE
+      </button>
+    </>
+  );
 };
 
-export default Contact;
+const mapDispatchToProps = dispatch => ({
+  onDeleteNumber: id => dispatch(actions.deleteContact(id)),
+});
+
+export default connect(null, mapDispatchToProps)(Contact);

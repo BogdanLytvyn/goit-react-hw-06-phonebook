@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Contact from '../contact/Contact';
+import { connect } from 'react-redux';
 
-const ContactList = ({ items, onDeleteNumber }) => (
-  <ul>
-    {items.map(item => (
-      <li key={item.id}>
-        <Contact {...item} onDeleteNumber={() => onDeleteNumber(item.id)} />
-      </li>
-    ))}
-  </ul>
-);
+class ContactList extends Component {
+  render() {
+    return (
+      <ul>
+        {this.props.contacts.map(item => (
+          <li key={item.id}>
+            <Contact contact={item} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+}
 
 ContactList.propTypes = {
   items: PropTypes.arrayOf(
@@ -21,4 +26,16 @@ ContactList.propTypes = {
   onDeleteNumber: PropTypes.func.isRequired,
 };
 
-export default ContactList;
+const mapStateToProps = state => {
+  return {
+    contacts: state.contacts.filter
+      ? state.contacts.items.filter(contact =>
+          contact.name
+            .toLowerCase()
+            .includes(state.contacts.filter.toLowerCase()),
+        )
+      : state.contacts.items,
+  };
+};
+
+export default connect(mapStateToProps)(ContactList);
