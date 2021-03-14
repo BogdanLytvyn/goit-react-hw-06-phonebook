@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Contact.module.css';
 import { connect } from 'react-redux';
-import actions from '../../redux/contacts/contuctsActions';
+import { deleteContact } from '../../redux/contacts/contuctsActions';
 
 const Contact = ({ contact, onDeleteNumber }) => {
   const deleteItem = () => {
@@ -25,7 +25,7 @@ const Contact = ({ contact, onDeleteNumber }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  onDeleteNumber: id => dispatch(actions.deleteContact(id)),
+  onDeleteNumber: id => dispatch(deleteContact(id)),
 });
 
 export default connect(null, mapDispatchToProps)(Contact);
